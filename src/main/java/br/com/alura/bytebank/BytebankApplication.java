@@ -2,18 +2,21 @@ package br.com.alura.bytebank;
 
 import br.com.alura.bytebank.domain.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
+import br.com.alura.bytebank.domain.conta.Conta;
 import br.com.alura.bytebank.domain.conta.ContaService;
 import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.Set;
 
 public class BytebankApplication {
 
-    private static ContaService service = new ContaService();
-    private static Scanner teclado = new Scanner(System.in).useDelimiter("\n");
+    private static final ContaService service = new ContaService();
+    private static final Scanner teclado = new Scanner(System.in).useDelimiter("\n");
 
     public static void main(String[] args) {
-        var opcao = exibirMenu();
+        byte opcao = exibirMenu();
         while (opcao != 7) {
             try {
                 switch (opcao) {
@@ -47,7 +50,7 @@ public class BytebankApplication {
         System.out.println("Finalizando a aplicação.");
     }
 
-    private static int exibirMenu() {
+    private static byte exibirMenu() {
         System.out.println("""
                 BYTEBANK - ESCOLHA UMA OPÇÃO:
                 1 - Listar contas abertas
@@ -58,13 +61,13 @@ public class BytebankApplication {
                 6 - Realizar depósito em uma conta
                 7 - Sair
                 """);
-        return teclado.nextInt();
+        return teclado.nextByte();
     }
 
     private static void listarContas() {
         System.out.println("Contas cadastradas:");
-        var contas = service.listarContasAbertas();
-        contas.stream().forEach(System.out::println);
+        Set<Conta> contas = service.listarContasAbertas();
+        contas.forEach(System.out::println);
 
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();
@@ -72,16 +75,16 @@ public class BytebankApplication {
 
     private static void abrirConta() {
         System.out.println("Digite o número da conta:");
-        var numeroDaConta = teclado.nextInt();
+        int numeroDaConta = teclado.nextInt();
 
         System.out.println("Digite o nome do cliente:");
-        var nome = teclado.next();
+        String nome = teclado.next();
 
         System.out.println("Digite o cpf do cliente:");
-        var cpf = teclado.next();
+        String cpf = teclado.next();
 
         System.out.println("Digite o email do cliente:");
-        var email = teclado.next();
+        String email = teclado.next();
 
         service.abrir(new DadosAberturaConta(numeroDaConta, new DadosCadastroCliente(nome, cpf, email)));
 
@@ -92,7 +95,7 @@ public class BytebankApplication {
 
     private static void encerrarConta() {
         System.out.println("Digite o número da conta:");
-        var numeroDaConta = teclado.nextInt();
+        int numeroDaConta = teclado.nextInt();
 
         service.encerrar(numeroDaConta);
 
@@ -103,8 +106,8 @@ public class BytebankApplication {
 
     private static void consultarSaldo() {
         System.out.println("Digite o número da conta:");
-        var numeroDaConta = teclado.nextInt();
-        var saldo = service.consultarSaldo(numeroDaConta);
+        int numeroDaConta = teclado.nextInt();
+        BigDecimal saldo = service.consultarSaldo(numeroDaConta);
         System.out.println("Saldo da conta: " + saldo);
 
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
@@ -113,10 +116,10 @@ public class BytebankApplication {
 
     private static void realizarSaque() {
         System.out.println("Digite o número da conta:");
-        var numeroDaConta = teclado.nextInt();
+        int numeroDaConta = teclado.nextInt();
 
         System.out.println("Digite o valor do saque:");
-        var valor = teclado.nextBigDecimal();
+        BigDecimal valor = teclado.nextBigDecimal();
 
         service.realizarSaque(numeroDaConta, valor);
         System.out.println("Saque realizado com sucesso!");
@@ -126,10 +129,10 @@ public class BytebankApplication {
 
     private static void realizarDeposito() {
         System.out.println("Digite o número da conta:");
-        var numeroDaConta = teclado.nextInt();
+        int numeroDaConta = teclado.nextInt();
 
         System.out.println("Digite o valor do depósito:");
-        var valor = teclado.nextBigDecimal();
+        BigDecimal valor = teclado.nextBigDecimal();
 
         service.realizarDeposito(numeroDaConta, valor);
 

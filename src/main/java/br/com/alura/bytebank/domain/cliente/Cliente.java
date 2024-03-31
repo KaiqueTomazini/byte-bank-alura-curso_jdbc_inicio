@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Cliente {
 
-    private String nome;
-    private String cpf;
-    private String email;
+    private final String nome;
+    private final String cpf;
+    private final String email;
 
     public Cliente(DadosCadastroCliente dados) {
         this.nome = dados.nome();
@@ -34,18 +34,6 @@ public class Cliente {
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
 }

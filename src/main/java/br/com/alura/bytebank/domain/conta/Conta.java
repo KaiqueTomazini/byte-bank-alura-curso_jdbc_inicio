@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public class Conta {
 
-    private Integer numero;
+    private final Integer numero;
     private BigDecimal saldo;
-    private Cliente titular;
+    private final Cliente titular;
 
     public Conta(Integer numero, Cliente titular) {
         this.numero = numero;
@@ -59,7 +59,4 @@ public class Conta {
         return saldo;
     }
 
-    public Cliente getTitular() {
-        return titular;
-    }
 }

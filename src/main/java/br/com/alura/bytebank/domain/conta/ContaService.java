@@ -9,20 +9,20 @@ import java.util.Set;
 
 public class ContaService {
 
-    private Set<Conta> contas = new HashSet<>();
+    private final Set<Conta> contas = new HashSet<>();
 
     public Set<Conta> listarContasAbertas() {
         return contas;
     }
 
     public BigDecimal consultarSaldo(Integer numeroDaConta) {
-        var conta = buscarContaPorNumero(numeroDaConta);
+        Conta conta = buscarContaPorNumero(numeroDaConta);
         return conta.getSaldo();
     }
 
     public void abrir(DadosAberturaConta dadosDaConta) {
-        var cliente = new Cliente(dadosDaConta.dadosCliente());
-        var conta = new Conta(dadosDaConta.numero(), cliente);
+        Cliente cliente = new Cliente(dadosDaConta.dadosCliente());
+        Conta conta = new Conta(dadosDaConta.numero(), cliente);
         if (contas.contains(conta)) {
             throw new RegraDeNegocioException("Já existe outra conta aberta com o mesmo número!");
         }
@@ -31,7 +31,7 @@ public class ContaService {
     }
 
     public void realizarSaque(Integer numeroDaConta, BigDecimal valor) {
-        var conta = buscarContaPorNumero(numeroDaConta);
+        Conta conta = buscarContaPorNumero(numeroDaConta);
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RegraDeNegocioException("Valor do saque deve ser superior a zero!");
         }
@@ -44,7 +44,7 @@ public class ContaService {
     }
 
     public void realizarDeposito(Integer numeroDaConta, BigDecimal valor) {
-        var conta = buscarContaPorNumero(numeroDaConta);
+        Conta conta = buscarContaPorNumero(numeroDaConta);
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RegraDeNegocioException("Valor do deposito deve ser superior a zero!");
         }
@@ -53,7 +53,7 @@ public class ContaService {
     }
 
     public void encerrar(Integer numeroDaConta) {
-        var conta = buscarContaPorNumero(numeroDaConta);
+        Conta conta = buscarContaPorNumero(numeroDaConta);
         if (conta.possuiSaldo()) {
             throw new RegraDeNegocioException("Conta não pode ser encerrada pois ainda possui saldo!");
         }
@@ -64,7 +64,7 @@ public class ContaService {
     private Conta buscarContaPorNumero(Integer numero) {
         return contas
                 .stream()
-                .filter(c -> c.getNumero() == numero)
+                .filter(c -> c.getNumero().equals(numero))
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));
     }
