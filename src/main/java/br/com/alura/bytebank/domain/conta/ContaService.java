@@ -1,18 +1,26 @@
 package br.com.alura.bytebank.domain.conta;
 
+import br.com.alura.bytebank.ConnectionFactory;
 import br.com.alura.bytebank.domain.RegraDeNegocioException;
-import br.com.alura.bytebank.domain.cliente.Cliente;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ContaService {
+    private final ConnectionFactory connectionFactory;
+
+    public ContaService() {
+        this.connectionFactory = new ConnectionFactory();
+    }
 
     private final Set<Conta> contas = new HashSet<>();
 
     public Set<Conta> listarContasAbertas() {
-        return contas;
+        Connection connection = connectionFactory.connectDB();
+        return new ContaDAO(connection).listar();
     }
 
     public BigDecimal consultarSaldo(Integer numeroDaConta) {
@@ -20,14 +28,9 @@ public class ContaService {
         return conta.getSaldo();
     }
 
-    public void abrir(DadosAberturaConta dadosDaConta) {
-        Cliente cliente = new Cliente(dadosDaConta.dadosCliente());
-        Conta conta = new Conta(dadosDaConta.numero(), cliente);
-        if (contas.contains(conta)) {
-            throw new RegraDeNegocioException("Já existe outra conta aberta com o mesmo número!");
-        }
-
-        contas.add(conta);
+    public boolean abrir(DadosAberturaConta dadosDaConta) throws SQLException {
+        Connection connection = connectionFactory.connectDB();
+        return new ContaDAO(connection).insere(dadosDaConta);
     }
 
     public void realizarSaque(Integer numeroDaConta, BigDecimal valor) {
@@ -62,10 +65,11 @@ public class ContaService {
     }
 
     private Conta buscarContaPorNumero(Integer numero) {
-        return contas
-                .stream()
-                .filter(c -> c.getNumero().equals(numero))
-                .findFirst()
-                .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));
+        Connection connection = connectionFactory.connectDB();
+        Conta conta = new ContaDAO(connection).listarPorNumero(numero);
+        if (conta != null)
+            return conta;
+        else
+            throw new RegraDeNegocioException("Não existe conta cadastrada com esse número!");
     }
 }

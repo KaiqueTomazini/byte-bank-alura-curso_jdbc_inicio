@@ -7,6 +7,7 @@ import br.com.alura.bytebank.domain.conta.ContaService;
 import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -43,6 +44,8 @@ public class BytebankApplication {
                 System.out.println("Erro: " + e.getMessage());
                 System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu");
                 teclado.next();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
             opcao = exibirMenu();
         }
@@ -73,7 +76,7 @@ public class BytebankApplication {
         teclado.next();
     }
 
-    private static void abrirConta() {
+    private static void abrirConta() throws SQLException {
         System.out.println("Digite o número da conta:");
         int numeroDaConta = teclado.nextInt();
 
@@ -86,9 +89,14 @@ public class BytebankApplication {
         System.out.println("Digite o email do cliente:");
         String email = teclado.next();
 
-        service.abrir(new DadosAberturaConta(numeroDaConta, new DadosCadastroCliente(nome, cpf, email)));
+        if (service.abrir(
+                new DadosAberturaConta(numeroDaConta,
+                        new DadosCadastroCliente(nome,
+                                cpf,
+                                email)))) {
+            System.out.println("Conta aberta com sucesso!");
+        } else System.out.println("Não foi possível abrir sua conta!");
 
-        System.out.println("Conta aberta com sucesso!");
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();
     }
