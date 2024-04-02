@@ -8,31 +8,19 @@ import java.util.Objects;
 public class Conta {
 
     private final Integer numero;
-    private BigDecimal saldo;
+    private final BigDecimal saldo;
     private final Cliente titular;
+    private final Boolean estaAtiva;
 
-    public Conta(Integer numero, Cliente titular) {
-        this.numero = numero;
-        this.titular = titular;
-        this.saldo = BigDecimal.ZERO;
-    }
-
-    public Conta(Integer numero, BigDecimal saldo, Cliente titular) {
+    public Conta(Integer numero, BigDecimal saldo, Cliente titular, Boolean estaAtiva) {
         this.numero = numero;
         this.saldo = saldo;
         this.titular = titular;
+        this.estaAtiva = estaAtiva;
     }
 
     public boolean possuiSaldo() {
         return this.saldo.compareTo(BigDecimal.ZERO) != 0;
-    }
-
-    public void sacar(BigDecimal valor) {
-        this.saldo = this.saldo.subtract(valor);
-    }
-
-    public void depositar(BigDecimal valor) {
-        this.saldo = this.saldo.add(valor);
     }
 
     @Override
@@ -65,4 +53,7 @@ public class Conta {
         return saldo;
     }
 
+    public Boolean getEstaAtiva() {
+        return this.estaAtiva;
+    }
 }
